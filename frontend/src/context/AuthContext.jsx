@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
 
   const fetchCurrentUser = async () => {
     try {
-      const data = await apiFetch('/api/auth/me', { method: 'GET' });
+      const data = await apiFetch('/api/me', { method: 'GET' });
       if (data.success) {
         setUser(data.user);
         setCsrfToken(data.csrf_token || null);
@@ -29,7 +29,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (credentials) => {
-    const data = await apiFetch('/api/auth/login', { method: 'POST', body: credentials });
+    const data = await apiFetch('/api/login', { method: 'POST', body: credentials });
     if (data.success) {
       setUser(data.user);
       setCsrfToken(data.csrf_token || null);
@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
   };
 
   const register = async (payload) => {
-    const data = await apiFetch('/api/auth/register', { method: 'POST', body: payload });
+    const data = await apiFetch('/api/register', { method: 'POST', body: payload });
     if (data.success) {
       setUser(data.user);
       setCsrfToken(data.csrf_token || null);
@@ -48,7 +48,7 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      await apiFetch('/api/auth/logout', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken } });
+      await apiFetch('/api/logout', { method: 'POST', headers: { 'X-CSRF-Token': csrfToken } });
     } finally {
       setUser(null);
       setCsrfToken(null);
@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
   };
 
   const updateProfile = async (payload) => {
-    const data = await apiFetch('/api/auth/profile', {
+    const data = await apiFetch('/api/profile', {
       method: 'PUT',
       headers: { 'X-CSRF-Token': csrfToken },
       body: payload,
@@ -68,7 +68,7 @@ export function AuthProvider({ children }) {
   };
 
   const changePassword = async (payload) => {
-    return apiFetch('/api/auth/change-password', {
+    return apiFetch('/api/change-password', {
       method: 'PUT',
       headers: { 'X-CSRF-Token': csrfToken },
       body: payload,
@@ -76,11 +76,11 @@ export function AuthProvider({ children }) {
   };
 
   const requestPasswordReset = async (payload) => {
-    return apiFetch('/api/auth/reset-password-request', { method: 'POST', body: payload });
+    return apiFetch('/api/reset-password-request', { method: 'POST', body: payload });
   };
 
   const resetPassword = async (payload) => {
-    return apiFetch('/api/auth/reset-password', { method: 'POST', body: payload });
+    return apiFetch('/api/reset-password', { method: 'POST', body: payload });
   };
 
   const authFetch = async (path, options = {}) => {

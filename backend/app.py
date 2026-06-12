@@ -311,7 +311,7 @@ def handle_exceptions(fn):
             return jsonify({'error': str(e)}), 500
     return wrapper
 
-@app.route('/api/auth/register', methods=['POST'])
+@app.route('/api/register', methods=['POST'])
 @handle_exceptions
 def register():
     data = request.json or {}
@@ -368,7 +368,7 @@ def register():
     csrf_token = create_session(format_user(user))
     return jsonify({'success': True, 'message': 'Registration successful.', 'user': format_user(user), 'csrf_token': csrf_token})
 
-@app.route('/api/auth/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 @handle_exceptions
 def login():
     data = request.json or {}
@@ -385,14 +385,14 @@ def login():
     csrf_token = create_session(format_user(user))
     return jsonify({'success': True, 'message': 'Login successful.', 'user': format_user(user), 'csrf_token': csrf_token})
 
-@app.route('/api/auth/logout', methods=['POST'])
+@app.route('/api/logout', methods=['POST'])
 @auth_required
 @handle_exceptions
 def logout():
     destroy_session()
     return jsonify({'success': True, 'message': 'Logged out successfully.'})
 
-@app.route('/api/auth/me', methods=['GET'])
+@app.route('/api/me', methods=['GET'])
 @handle_exceptions
 def me():
     user = current_user()
@@ -400,7 +400,7 @@ def me():
         return jsonify({'success': False, 'message': 'Not authenticated.'}), 401
     return jsonify({'success': True, 'user': format_user(user), 'csrf_token': session.get('csrf_token')})
 
-@app.route('/api/auth/profile', methods=['PUT'])
+@app.route('/api/profile', methods=['PUT'])
 @auth_required
 @csrf_protect
 @handle_exceptions
@@ -435,7 +435,7 @@ def update_profile():
     updated_user = get_user_by_id(user['id'])
     return jsonify({'success': True, 'message': 'Profile updated successfully.', 'user': format_user(updated_user)})
 
-@app.route('/api/auth/change-password', methods=['PUT'])
+@app.route('/api/change-password', methods=['PUT'])
 @auth_required
 @csrf_protect
 @handle_exceptions
@@ -459,7 +459,7 @@ def change_password():
     execute_db('UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?', (password_hash, updated_at, user['id']))
     return jsonify({'success': True, 'message': 'Password updated successfully.'})
 
-@app.route('/api/auth/reset-password-request', methods=['POST'])
+@app.route('/api/reset-password-request', methods=['POST'])
 @handle_exceptions
 def request_password_reset():
     data = request.json or {}
@@ -481,7 +481,7 @@ def request_password_reset():
 
     return jsonify({'success': True, 'message': 'If that email exists, a reset link will be sent.'})
 
-@app.route('/api/auth/reset-password', methods=['POST'])
+@app.route('/api/reset-password', methods=['POST'])
 @handle_exceptions
 def reset_password():
     data = request.json or {}
