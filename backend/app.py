@@ -6,8 +6,6 @@ import pandas as pd
 import pytesseract
 import re
 from datetime import datetime, timedelta
-import dateutil.parser as date_parser
-import joblib
 import os
 import sqlite3
 import bcrypt
@@ -20,7 +18,6 @@ import base64
 import json
 import sys
 from collections import defaultdict
-from models import EnhancedExpenseClassifier
 import pdfplumber
 import PyPDF2
 
@@ -30,21 +27,22 @@ if hasattr(sys.stderr, 'reconfigure'):
     sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SMARTSPEND_SECRET_KEY', 'change-this-secret-key-for-production')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.environ.get('SMARTSPEND_SECRET_KEY', 'change-this-secret-key-for-production'))
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['SESSION_COOKIE_SECURE'] = False
+# Secure cookies should be True in production
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get('FLASK_ENV') == 'production'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
-CORS(app, supports_credentials=True, resources={
-    r'/api/*': {
-        'origins': [
-            'http://localhost:5173',
-            'http://localhost:5174',
-            'http://127.0.0.1:5173',
-            'http://127.0.0.1:5174'
-        ]
-    }
-})
+
+# Flexible CORS config for production (Render) and local dev
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
+
+@app.route("/")
+def home():
+    return jsonify({
+        "status": "success",
+        "message": "FinTrack Backend is running"
+    })
 
 DATABASE_PATH = os.path.join(os.path.dirname(__file__), 'smartspend.db')
 PASSWORD_RESET_SALT = 'smartspend-password-reset'
@@ -304,7 +302,17 @@ def csrf_protect(fn):
         return fn(*args, **kwargs)
     return wrapper
 
+def handle_exceptions(fn):
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        try:
+            return fn(*args, **kwargs)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    return wrapper
+
 @app.route('/api/auth/register', methods=['POST'])
+@handle_exceptions
 def register():
     data = request.json or {}
     required_fields = ['username', 'first_name', 'last_name', 'email', 'profession', 'annual_income', 'current_savings', 'password', 'confirm_password']
@@ -361,6 +369,7 @@ def register():
     return jsonify({'success': True, 'message': 'Registration successful.', 'user': format_user(user), 'csrf_token': csrf_token})
 
 @app.route('/api/auth/login', methods=['POST'])
+@handle_exceptions
 def login():
     data = request.json or {}
     identifier = (data.get('identifier') or '').strip()
@@ -378,11 +387,13 @@ def login():
 
 @app.route('/api/auth/logout', methods=['POST'])
 @auth_required
+@handle_exceptions
 def logout():
     destroy_session()
     return jsonify({'success': True, 'message': 'Logged out successfully.'})
 
 @app.route('/api/auth/me', methods=['GET'])
+@handle_exceptions
 def me():
     user = current_user()
     if not user:
@@ -392,6 +403,7 @@ def me():
 @app.route('/api/auth/profile', methods=['PUT'])
 @auth_required
 @csrf_protect
+@handle_exceptions
 def update_profile():
     user = current_user()
     data = request.json or {}
@@ -426,6 +438,7 @@ def update_profile():
 @app.route('/api/auth/change-password', methods=['PUT'])
 @auth_required
 @csrf_protect
+@handle_exceptions
 def change_password():
     user = current_user()
     data = request.json or {}
@@ -447,6 +460,7 @@ def change_password():
     return jsonify({'success': True, 'message': 'Password updated successfully.'})
 
 @app.route('/api/auth/reset-password-request', methods=['POST'])
+@handle_exceptions
 def request_password_reset():
     data = request.json or {}
     email = (data.get('email') or '').strip().lower()
@@ -468,6 +482,7 @@ def request_password_reset():
     return jsonify({'success': True, 'message': 'If that email exists, a reset link will be sent.'})
 
 @app.route('/api/auth/reset-password', methods=['POST'])
+@handle_exceptions
 def reset_password():
     data = request.json or {}
     token = data.get('token', '')
