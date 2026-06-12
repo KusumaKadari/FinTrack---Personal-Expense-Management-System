@@ -240,24 +240,7 @@ source venv/bin/activate
 
 Create environment files as needed for local or production configuration.
 
-### Frontend
 
-Create a `.env` file inside the `frontend` folder:
-
-VITE_API_BASE_URL=http://localhost:5000
-
-
-### Backend
-
-Create a `.env` file inside the `backend` folder if your deployment requires custom configuration:
-
-```env
-FLASK_ENV=development
-SECRET_KEY=your-secret-key
-DATABASE_URL=sqlite:///smartspend.db
-```
-
-For production, `DATABASE_URL` can be updated to use PostgreSQL.
 
 ## API Modules
 
@@ -292,10 +275,4 @@ Main data areas include:
 - Role-based access control
 - Improved charting and forecasting
 
-## License
 
-This project is licensed under the MIT License.
-
-## Project Status
-
-FinTrack is a  full-stack web application project focused on personal finance tracking, expense analysis, and responsive dashboard-based financial management.
