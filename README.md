@@ -120,64 +120,36 @@ SQLite Database
 
 ## Folder Structure
 
-
 FinTrack/
-├─ README.md
-├─ LICENSE
-├─ setup/
-│  ├─ setup.bat
-│  └─ start_system.bat
-│
-├─ backend/
-│  ├─ app.py
-│  ├─ models.py
-│  ├─ requirements.txt
-│  └─ smartspend.db
-│
-├─ frontend/
-│  ├─ package.json
-│  ├─ index.html
-│  ├─ vite.config.js
-│  ├─ tailwind.config.js
-│  ├─ postcss.config.js
-│  └─ src/
-│     ├─ App.jsx
-│     ├─ main.jsx
-│     ├─ index.css
-│     ├─ pages/
-│     │  ├─ DashboardPage.jsx
-│     │  ├─ AnalyticsPage.jsx
-│     │  ├─ HistoryPage.jsx
-│     │  ├─ RecordPage.jsx
-│     │  ├─ ProfilePage.jsx
-│     │  ├─ LoginPage.jsx
-│     │  ├─ RegisterPage.jsx
-│     │  ├─ ForgotPasswordPage.jsx
-│     │  ├─ ResetPasswordPage.jsx
-│     │  └─ SecurityPage.jsx
-│     ├─ components/
-│     │  ├─ Navbar.jsx
-│     │  ├─ Sidebar.jsx
-│     │  ├─ ProtectedLayout.jsx
-│     │  ├─ PieChartCard.jsx
-│     │  ├─ LineChartCard.jsx
-│     │  ├─ TrendLineChart.jsx
-│     │  ├─ ExpenseTable.jsx
-│     │  └─ UploadCard.jsx
-│     ├─ context/
-│     │  ├─ AuthContext.jsx
-│     │  └─ ExpenseDataContext.jsx
-│     └─ utils/
-│        ├─ api.js
-│        ├─ dateUtils.js
-│        ├─ expenseAnalytics.js
-│        └─ expenseEvents.js
-│
-└─ Expense_model/
-   ├─ data/
-   ├─ models/
-   ├─ notebooks/
-   └─ scripts/
+├── backend/                  # Python backend
+│   ├── app.py                # Main application logic
+│   ├── models.py             # Database models
+│   ├── requirements.txt      # Python dependencies
+│   └── smartspend.db         # SQLite database
+├── frontend/                 # React frontend (Vite)
+│   ├── public/               # Public assets
+│   ├── src/                  # Application source code
+│   │   ├── components/       # Reusable React components
+│   │   ├── context/          # React context for state management
+│   │   ├── pages/            # Application views/pages
+│   │   ├── utils/            # Helper functions
+│   │   ├── App.jsx           # Root component
+│   │   ├── main.jsx          # React entry point
+│   │   └── index.css         # Global styles
+│   ├── package.json          # Node dependencies & scripts
+│   ├── vite.config.js        # Vite build configuration
+│   └── tailwind.config.js    # Tailwind CSS configuration
+├── Expense_model/            # Machine Learning & Data Models
+│   ├── data/                 # Datasets for model training
+│   ├── models/               # Saved trained models
+│   ├── notebooks/            # Jupyter notebooks for data exploration
+│   └── scripts/              # Training and preprocessing scripts
+├── setup/                    # Initialization scripts
+│   ├── setup.bat             # Script to initialize the environment
+│   └── start_system.bat      # Script to start both frontend & backend
+├── .gitignore                # Git ignore rules
+├── LICENSE                   # Project License
+└── README.md                 # Main project documentation
 
 
 ## Installation Guide
